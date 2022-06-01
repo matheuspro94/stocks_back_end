@@ -7,7 +7,7 @@ function dateRange (startDate, endDate, steps = 1) {
 
   while (currentDate <= new Date(endDate)) {
     dateArray.push(format('yyyy-MM-dd', currentDate))
-    // Use UTC date to prevent problems with time zones and DST
+
     currentDate.setUTCDate(currentDate.getUTCDate() + steps)
   }
 
