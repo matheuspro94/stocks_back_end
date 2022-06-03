@@ -1,6 +1,7 @@
 import axios from 'axios'
 import format from 'date-format'
 import dateRange from '../../utils/dateRange'
+import Joi from 'joi'
 import { Request, Response } from 'express'
 
 class Stocks {
@@ -85,6 +86,21 @@ class Stocks {
   async getCompareStocks (req: Request, res: Response) {
     const { stocks } = req.body
     const stockName = req.params.stockName
+
+    const schema = Joi.object({
+      stocks: Joi.array().items(Joi.string().required()).required()
+    })
+
+    try {
+      const validate = await schema.validate(req.body)
+      if (validate.error) {
+        return res.status(400).json({
+          error: validate.error.details[0].message
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    }
 
     const getStocks = await Promise.all(stocks.map(async (stock: string) => {
       const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stock.toUpperCase()}&apikey=DZHDQL5B9FQDEXC3`
